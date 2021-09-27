@@ -1,0 +1,73 @@
+{% extends 'adminapp/base.html' %}
+
+{% block content %}
+    <h1 class="mt-4">Создание продукта</h1>
+    <form action="{% url 'admins:admin_products_create' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert"
+                 style="margin-top: 50px;">
+                {{ form.errors|escape }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endif %}
+        <div class="form-row">
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="small mb-1" for="{{ form.name.id_for_label }}"
+                    >Наименование</label>
+                    {{ form.name }}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="small mb-1" for="{{ form.category.id_for_label }}">Категория продукта</label>
+                    {{ form.category }}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="small mb-1" for="{{ form.quantity.id_for_label }}">Количество</label>
+                    {{ form.quantity }}
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="form-group">
+                    <label class="small mb-1" for="{{ form.price.id_for_label }}">Цена</label>
+                    {{ form.price }}
+                </div>
+            </div>
+        </div>
+        <div class="form-row mb-2">
+            <div class="col-lg-12">
+                <div class="custom-file">
+                    {{ form.image }}
+                    <label class="custom-file-label" for="{{ form.image.id_for_label }}">Выберите изображение</label>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-lg-12">
+                <label class="small mb-1" for="{{ form.short_description.id_for_label }}">Короткое описание</label>
+                {{ form.short_description }}
+            </div>
+            <div class="form-row">
+                <div class="col-lg-12">
+                    <label class="small mb-1" for="{{ form.description.id_for_label }}">Полное описание</label>
+                    {{ form.description }}
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-lg-12" style="margin-top: 33px">
+                <input
+                        class="btn btn-info btn-block"
+                        type="submit"
+                        value="Сохранить"
+                />
+            </div>
+        </div>
+    </form>
+{% endblock %}
