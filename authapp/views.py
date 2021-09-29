@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
 from django.urls import reverse
@@ -5,7 +6,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from authapp.models import User
 from basket.models import Basket
+from geekshop import settings
 
 
 def login(request):
@@ -29,8 +32,9 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Вы успешно зарегистрировались!')
+            user = form.save()
+            if send_verify_link(user):
+                messages.success(request, 'Вы успешно зарегистрировались!')
             return HttpResponseRedirect(reverse('auth:login'))
 
     else:
@@ -58,6 +62,27 @@ def profile(request):
         form = UserProfileForm(instance=request.user)
     context = {
         'form': form,
-        'baskets': Basket.objects.filter(user=request.user),
+        # 'baskets': Basket.objects.filter(user=request.user),
     }
     return render(request, 'authapp/profile.html', context)
+
+
+def send_verify_link(user):
+    verify_link = reverse('authapp:verify', args=[user.email, user.activation_key])
+    subject = f'для активации учетной записи {user.username} пройдите по ссылке'
+    message = f'для подтверждения учетной записи {user.username} на портале \n {settings.DOMAIN_NAME}{verify_link}'
+    return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
+
+def verify(request,email,activation_key):
+
+    user = User.objects.get(email=email)
+    try:
+        if user and user.activation_key == activation_key and not user.is_activation_key_expired():
+            user.activation_key=''
+            user.activation_key_expires = None
+            user.is_active = True
+            user.save()
+            auth.login(request,user)
+        return render(request,'authapp/verification.html')
+    except Exception as e:
+        return HttpResponseRedirect(reverse('index'))

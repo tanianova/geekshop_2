@@ -20,7 +20,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ho5er4ztiw5nr2ad^!7co8l42zqlv=t=go@k7w3b57t4!f9p&o'
+from dotenv import load_dotenv
 
+load_dotenv( '.env')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -64,6 +66,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                'mainapp.context_processors.basket'
             ],
         },
     },
@@ -120,9 +124,22 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
 
-MEDIA_URL='/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-AUTH_USER_MODEL='authapp.User'
+AUTH_USER_MODEL = 'authapp.User'
 
 LOGIN_URL = '/auth/login/'
+DOMAIN_NAME = 'localhost://localhost:8000'
+EMAIL_HOST = 'localhost'
+EMAIL_PORT = '25'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_SSL = False if os.getenv('EMAIL_USE_SSL') == 'False' else True
+
+
+# EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+# EMAIL_FILE_PATH = 'tmp/emails/'
+
+
+EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = None,None
