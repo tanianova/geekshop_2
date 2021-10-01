@@ -1,0 +1,14 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Subject: 
+ =?utf-8?b?0LTQu9GPINCw0LrRgtC40LLQsNGG0LjQuCDRg9GH0LXRgtC90L7QuSDQt9Cw0L8=?=
+ =?utf-8?b?0LjRgdC4IGEg0L/RgNC+0LnQtNC40YLQtSDQv9C+INGB0YHRi9C70LrQtQ==?=
+From: test@yandex.ru
+To: a@yandex.ru
+Date: Thu, 30 Sep 2021 17:55:37 -0000
+Message-ID: <163302453765.46483.774674412594492879@1.0.0.127.in-addr.arpa>
+
+для подтверждения учетной записи a на портале 
+ localhost:8000/auth/verify/a@yandex.ru/4c2701cc723b8366f0c9db3c810316d2d1272004/
+-------------------------------------------------------------------------------
