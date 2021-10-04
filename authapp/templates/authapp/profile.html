@@ -14,7 +14,7 @@
                     <img width="100" height="100"
                          src="
 
-                                 {% if user.avatar %}{{ user.avatar }}{% else %}{% static 'vendor/img/users/default_avatar.jpg' %}{% endif %}"
+                                 {% if user.avatar %}{{ user.avatar.url }}{% else %}{% static 'vendor/img/users/default_avatar.jpg' %}{% endif %}"
                          class="img-thumbnail"
                          alt="photo">
                 </div>
