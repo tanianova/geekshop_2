@@ -5,6 +5,15 @@ from django.contrib.auth.decorators import login_required
 from django.template.loader import render_to_string
 from django.http import JsonResponse
 
+from django.views.generic import  CreateView, UpdateView, DeleteView
+
+
+# class BasketCreate(CreateView):
+#     pass
+# class BasketDelete(DeleteView):
+#     pass
+# class BasketUpdate(UpdateView):
+#     pass
 
 @login_required
 def basket_add(request, product_id):
@@ -39,10 +48,6 @@ def basket_edit(request, id, quantity):
             basket.save()
         else:
             basket.delete()
-        # baskets = Basket.objects.filter(user=request.user)
-        # context = {
-        #     'baskets': baskets,
-        # }
-        # result = render_to_string('basket/basket.html', context, request=request)
+
         result = render_to_string('basket/basket.html',  request=request)
         return JsonResponse({'result': result})

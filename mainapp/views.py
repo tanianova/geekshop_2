@@ -26,4 +26,3 @@ def products(request, category_id=None, page=1):
         'categories': ProductCategory.objects.all(),
     }
     return render(request, 'mainapp/products.html', context)
-

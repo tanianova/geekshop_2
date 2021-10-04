@@ -7,7 +7,6 @@ from django.contrib.auth.decorators import login_required
 
 from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserProfileEditForm
 from authapp.models import User
-from basket.models import Basket
 from geekshop import settings
 
 

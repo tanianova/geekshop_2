@@ -43,6 +43,11 @@ def save_user_profile(backend, user, response, *args, **kwargs):
             raise AuthForbidden('social_core.backends.vk.VKOAuth2')
 
     if data['photo_max_orig']:
-        user.avatar = data['photo_max_orig']
+        photo_link = data['photo_max_orig']
+        photo_response = requests.get(photo_link)
+        path_photo = f'user_image{user.pk}.jpg'
+        with open(f'media/{path_photo}','wb') as photo:
+            photo.write(photo_response.content)
+        user.avatar = path_photo
 
     user.save()
