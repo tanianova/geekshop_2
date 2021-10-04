@@ -5,9 +5,8 @@ from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
-from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm
+from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm, UserProfileEditForm
 from authapp.models import User
-from basket.models import Basket
 from geekshop import settings
 
 
@@ -28,21 +27,22 @@ def login(request):
     return render(request, 'authapp/login.html', context)
 
 
+
 def register(request):
     if request.method == 'POST':
-        form = UserRegisterForm(data=request.POST, files=request.FILES)
+        form = UserRegisterForm(data=request.POST)
         if form.is_valid():
             user = form.save()
             if send_verify_link(user):
-                messages.success(request, 'Вы успешно зарегистрировались!')
-            return HttpResponseRedirect(reverse('auth:login'))
-
+                messages.success(request, 'Вы успешно зарегистрировались')
+            return HttpResponseRedirect(reverse('authapp:login'))
     else:
         form = UserRegisterForm()
     context = {
         'title': 'GeekShop - Регистрация',
-        'form': form,
+        'form': form
     }
+
     return render(request, 'authapp/register.html', context)
 
 
@@ -54,16 +54,19 @@ def logout(request):
 @login_required
 def profile(request):
     if request.method == 'POST':
-        form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user)
-        if form.is_valid():
+        form = UserProfileForm(data=request.POST, instance=request.user, files=request.FILES)
+        profile_form = UserProfileEditForm(data=request.POST,instance=request.user.userprofile)
+        if form.is_valid() and profile_form.is_valid() :
             form.save()
-            return HttpResponseRedirect(reverse('auth:profile'))
+            return HttpResponseRedirect(reverse('authapp:profile'))
     else:
+        profile_form = UserProfileEditForm(instance=request.user.userprofile)
         form = UserProfileForm(instance=request.user)
     context = {
-        'form': form,
-        # 'baskets': Basket.objects.filter(user=request.user),
-    }
+            'title': 'GeekShop - Профиль',
+            'form': form,
+            'profile_form':profile_form
+        }
     return render(request, 'authapp/profile.html', context)
 
 
@@ -73,12 +76,12 @@ def send_verify_link(user):
     message = f'для подтверждения учетной записи {user.username} на портале \n {settings.DOMAIN_NAME}{verify_link}'
     return send_mail(subject, message, settings.EMAIL_HOST_USER, [user.email], fail_silently=False)
 
-def verify(request,email,activation_key):
 
-    user = User.objects.get(email=email)
+def verify(request,email,activation_key):
     try:
+        user = User.objects.get(email=email)
         if user and user.activation_key == activation_key and not user.is_activation_key_expired():
-            user.activation_key=''
+            user.activation_key = ''
             user.activation_key_expires = None
             user.is_active = True
             user.save()

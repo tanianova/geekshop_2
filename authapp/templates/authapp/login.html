@@ -50,10 +50,18 @@
                                     <div class="small"><a href="{% url 'auth:register' %}">Нужен аккаунт?
                                         Зарегистрируйся!</a></div>
                                 </div>
+                                <div class="list-group-horizontal card-footer text-center small">
+                                    <a href="{% url 'social:begin' 'vk-oauth2' %}?next=/">
+                                        <i class="fab fa-vk"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
+
                     </div>
+
                 </div>
+
             </main>
         </div>
     </div>
