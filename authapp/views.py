@@ -1,7 +1,8 @@
+from django.contrib.auth.views import LoginView
 from django.core.mail import send_mail
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
@@ -9,22 +10,31 @@ from authapp.forms import UserLoginForm, UserRegisterForm, UserProfileForm, User
 from authapp.models import User
 from geekshop import settings
 
+class LoginListView(LoginView):
+    template_name = 'authapp/login.html'
+    form_class = UserLoginForm
+    success_url = reverse_lazy('authapp:profile')
 
-def login(request):
-    if request.method == 'POST':
-        form = UserLoginForm(data=request.POST)
-        if form.is_valid():
-            username = request.POST['username']
-            password = request.POST['password']
-            user = auth.authenticate(username=username, password=password)
-            if user and user.is_active:
-                auth.login(request, user)
-                return HttpResponseRedirect(reverse('index'))
-    else:
-        form = UserLoginForm()
-    context = {'form': form}
+    def get_context_data(self, **kwargs):
+        context = super(LoginListView, self).get_context_data(**kwargs)
+        context['title'] = 'GeekShop - Авторизация'
+        return context
 
-    return render(request, 'authapp/login.html', context)
+# def login(request):
+#     if request.method == 'POST':
+#         form = UserLoginForm(data=request.POST)
+#         if form.is_valid():
+#             username = request.POST['username']
+#             password = request.POST['password']
+#             user = auth.authenticate(username=username, password=password)
+#             if user and user.is_active:
+#                 auth.login(request, user)
+#                 return HttpResponseRedirect(reverse('index'))
+#     else:
+#         form = UserLoginForm()
+#     context = {'form': form}
+#
+#     return render(request, 'authapp/login.html', context)
 
 
 
@@ -85,7 +95,7 @@ def verify(request,email,activation_key):
             user.activation_key_expires = None
             user.is_active = True
             user.save()
-            auth.login(request,user)
+            auth.login(request,user,backend='django.contrib.auth.backends.ModelBackend')
         return render(request,'authapp/verification.html')
     except Exception as e:
         return HttpResponseRedirect(reverse('index'))

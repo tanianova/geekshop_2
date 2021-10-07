@@ -1,11 +1,11 @@
 from django.urls import path
 
-from authapp.views import login, register, logout, profile, verify
+from authapp.views import LoginListView, register, logout, profile, verify
 
 app_name = 'authapp'
 
 urlpatterns = [
-    path('login/', login, name='login'),
+    path('login/', LoginListView.as_view(), name='login'),
     path('register/', register, name='register'),
     path('logout/', logout, name='logout'),
     path('profile/', profile, name='profile'),
