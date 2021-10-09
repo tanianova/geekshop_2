@@ -1,6 +1,7 @@
 from django.urls import path
 
-from ordersapp.views import OrderList, OrderRead, OrderDelete, OrderUpdate, OrderCreate, order_forming_complete
+from ordersapp.views import OrderList, OrderRead, OrderDelete, OrderUpdate, OrderCreate, order_forming_complete, \
+    payment_result
 
 app_name = 'ordersapp'
 
@@ -12,4 +13,5 @@ urlpatterns = [
     path('delete/<int:pk>/', OrderDelete.as_view(), name='delete'),
     path('forming-complete/<int:pk>/', order_forming_complete, name='forming_complete'),
 
+    path('payment/result/', payment_result, name='payment_result')
 ]
