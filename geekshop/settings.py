@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru-ru'
 
-TIME_ZONE = 'Europe/Moscow'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -161,6 +161,7 @@ EMAIL_FILE_PATH = 'tmp/emails/'
 
 # необходима для корректной переадресации при обработке исключений бэкендами аутентификации.
 LOGIN_ERROR_URL = '/'
+LOGIN_REDIRECT_URL='/'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
