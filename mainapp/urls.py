@@ -4,10 +4,9 @@ from mainapp.views import products, ProductDetail
 
 app_name = 'mainapp'
 
-
 urlpatterns = [
     path('', products, name='index'),
-    path('<int:category_id>/', products, name='product'),
+    path('category/<int:id>', products, name='category'),
     path('page/<int:page>/', products, name='page'),
-path('detail/<int:pk>/', ProductDetail.as_view(), name='detail'),
+    path('detail/<int:pk>/', ProductDetail.as_view(), name='detail'),
 ]
