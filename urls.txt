@@ -1,1 +1,4 @@
 http://37.140.198.142/auth/profile/ POST username=test&password=Taffi9170484
+http://37.140.198.142/products/
+http://37.140.198.142/orders/
+http://37.140.198.142/orders/create/
