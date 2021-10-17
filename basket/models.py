@@ -31,9 +31,9 @@ class Basket(models.Model):
     #     baskets = Basket.objects.filter(user=self.user)
     #     return sum(basket.quantity for basket in baskets)
 
-    def total_sum(self):
-        baskets = Basket.objects.filter(user=self.user)
-        return sum(basket.sum() for basket in baskets)
+    # def total_sum(self):
+    #     baskets = Basket.objects.filter(user=self.user)
+    #     return sum(basket.sum() for basket in baskets)
 
     @cached_property
     def get_items_cached(self):
@@ -42,6 +42,10 @@ class Basket(models.Model):
     def total_quantity(self):
         baskets = self.get_items_cached
         return sum(basket.quantity for basket in baskets)
+
+    def total_sum(self):
+        baskets = self.get_items_cached
+        return sum(basket.sum() for basket in baskets)
 
     @staticmethod
     def get_item(pk):
