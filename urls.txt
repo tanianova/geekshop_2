@@ -1,0 +1,6 @@
+http://37.140.198.142/products/
+http://37.140.198.142/orders/
+http://37.140.198.142/orders/create/
+http://37.140.198.142/products/category/1
+http://37.140.198.142/orders/update/3/
+http://37.140.198.142/

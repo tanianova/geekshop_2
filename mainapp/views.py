@@ -9,11 +9,9 @@ def index(request):
     return render(request, 'mainapp/index.html')
 
 
-def products(request, category_id=None, page=1):
-    if category_id:
-        products = Product.objects.filter(category_id=category_id)
-    else:
-        products = Product.objects.all()
+def products(request, id=None, page=1):
+    products = Product.objects.filter(category_id=id).select_related(
+        'category') if id != None else Product.objects.all().select_related('category')
     paginator = Paginator(products.order_by('price'), per_page=3)
     try:
         products_paginator = paginator.page(page)
@@ -27,6 +25,7 @@ def products(request, category_id=None, page=1):
         'categories': ProductCategory.objects.all(),
     }
     return render(request, 'mainapp/products.html', context)
+
 
 class ProductDetail(DetailView):
     model = Product
