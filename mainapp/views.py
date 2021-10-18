@@ -43,6 +43,18 @@ def get_links_product():
 def index(request):
     return render(request, 'mainapp/index.html')
 
+def get_product(pk):
+    if settings.LOW_CACHE:
+        key = f'product{pk}'
+        product = cache.get(key)
+
+        if product is None:
+            product = get_object_or_404(Product,pk=pk)
+            cache.set(key, product)
+        return product
+    else:
+        return get_object_or_404(Product,pk=pk)
+
 
 def products(request, id=None, page=1):
     products = Product.objects.filter(category_id=id).select_related(
@@ -70,5 +82,6 @@ class ProductDetail(DetailView):
 
     def get_context_data(self, category_id=None, *args, **kwargs):
         context = super().get_context_data()
+        context['product'] = get_product(self.kwargs.get('pk'))
         context['categories'] = ProductCategory.objects.all()
         return context
