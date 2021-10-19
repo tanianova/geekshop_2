@@ -55,11 +55,11 @@ def get_product(pk):
     else:
         return get_object_or_404(Product,pk=pk)
 
-
+# @cache_page(3600) перенесено в url
 def products(request, id=None, page=1):
     products = Product.objects.filter(category_id=id).select_related(
         'category') if id != None else Product.objects.all().select_related('category')
-    products = get_links_product()
+    # products = get_links_product()
     paginator = Paginator(products.order_by('price'), per_page=3)
     try:
         products_paginator = paginator.page(page)
@@ -70,7 +70,7 @@ def products(request, id=None, page=1):
     context = {
         'title': 'GeekShop - Каталог',
         'products': products_paginator,
-        'categories': get_links_category(),
+        'categories': ProductCategory.objects.filter(is_active=True),
     }
     return render(request, 'mainapp/products.html', context)
 
