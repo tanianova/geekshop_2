@@ -55,7 +55,8 @@ def get_product(pk):
     else:
         return get_object_or_404(Product,pk=pk)
 
-# @cache_page(3600) перенесено в url
+@never_cache
+@cache_page(3600)
 def products(request, id=None, page=1):
     products = Product.objects.filter(category_id=id).select_related(
         'category') if id != None else Product.objects.all().select_related('category')
