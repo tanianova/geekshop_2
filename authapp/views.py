@@ -18,7 +18,13 @@ from geekshop import settings
 class LoginListView(LoginView):
     template_name = 'authapp/login.html'
     form_class = UserLoginForm
-    success_url = reverse_lazy('index')
+    success_url = 'index'
+
+    def get(self, request, *args, **kwargs):
+        sup = super(LoginListView, self).get( request, *args, **kwargs)
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse_lazy(self.success_url))
+        return sup
 
     def get_context_data(self, **kwargs):
         context = super(LoginListView, self).get_context_data(**kwargs)
