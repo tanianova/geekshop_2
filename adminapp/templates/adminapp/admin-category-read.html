@@ -1,5 +1,4 @@
 {% extends 'adminapp/base.html' %}
-
 {% block content %}
 
 {#    <div id="layoutSidenav_content">#}
@@ -9,7 +8,7 @@
                 <div class="card mb-4">
                     <div class="card-header">
                         <i class="fas fa-table mr-1"></i>
-                        Продукты
+                        Категории
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -18,9 +17,6 @@
                                 <tr>
                                     <th>Наименование</th>
                                     <th>Описание</th>
-                                    <th>Категория</th>
-                                    <th>Цена</th>
-                                    <th>Количество</th>
                                     <th>Активный</th>
                                     <th>Удалить</th>
                                     <th>Изменить</th>
@@ -30,9 +26,6 @@
                                 <tr>
                                     <th>Наименование</th>
                                     <th>Описание</th>
-                                    <th>Категория</th>
-                                    <th>Цена</th>
-                                    <th>Количество</th>
                                     <th>Активный</th>
                                     <th>Удалить</th>
                                     <th>Изменить</th>
@@ -40,16 +33,12 @@
                                 </tfoot>
                                 <tbody>
 
-                                {% for product in object_list %}
+                                {% for category in object_list %}
                                     <tr>
-                                        <td>{{ product.name }}</td>
-                                        <td>{{ product.description }}</td>
-                                         <td>{{ product.category }}</td>
-                                         <td>{{ product.price }}</td>
-                                         <td>{{ product.quantity }}</td>
-
+                                        <td>{{ category.name }}</td>
+                                        <td>{{ category.description }}</td>
                                         <td class="text-center">
-                                            {% if product.is_active %}
+                                            {% if category.is_active %}
                                                 <i class="fas fa-check-circle"></i>
                                             {% else %}
 
@@ -57,15 +46,13 @@
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <form action="{#% url 'admins:admin_category_delete' category.id %#}"
-                                                  method="post">
+                                            <form action="{% url 'admins:admin_category_delete' category.id %}" method="post">
                                                 {% csrf_token %}
                                                 <input class="btn btn-danger btn-block" type="submit" value="Удалить">
                                             </form>
                                         </td>
                                         <td>
-                                            <form action="{#% url 'admins:admin_category_update' category.id %#}"
-                                                  method="post">
+                                            <form action="{% url 'admins:admin_category_update' category.id %}">
                                                 {% csrf_token %}
                                                 <input class="btn btn-success btn-block" type="submit" value="Изменить">
                                             </form>

@@ -4,10 +4,19 @@ from django.contrib.auth.decorators import user_passes_test
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, BaseDetailView
 from django.utils.decorators import method_decorator
+from django.db import connection
+from django.db.models import F
 
 from authapp.models import User
-from adminapp.forms import UserAdminRegisterForm, UserAdminProfileForm, ProductAdminCreateForm, ProductAdminUpdateForm
-from mainapp.models import Product
+from adminapp.forms import UserAdminRegisterForm, UserAdminProfileForm, ProductAdminCreateForm, ProductAdminUpdateForm, \
+    CategoryUpdateFormAdmin
+from mainapp.models import Product, ProductCategory
+
+
+def db_profile_by_type(prefix, type, queries):
+    update_queries = list(filter(lambda x: type in x['sql'], queries))
+    print(f'db_profile {type} for {prefix}:')
+    [print(query['sql']) for query in update_queries]
 
 
 @user_passes_test(lambda u: u.is_superuser, login_url='/')
@@ -149,7 +158,6 @@ class ProductDeleteView(DeleteView):
         return super(ProductDeleteView, self).dispatch(request, *args, **kwargs)
 
 
-
 # FBV:
 # def admin_products_read(request):
 #     context = {'products': product.objects.all()}
@@ -188,3 +196,63 @@ class ProductDeleteView(DeleteView):
 #     current_product = product.objects.get(id=id)
 #     current_product.delete()
 #     return HttpResponseRedirect(reverse('admins:admin_products_read'))
+
+# category
+
+
+class CategoryListView(ListView):
+    model = ProductCategory
+    template_name = 'adminapp/admin-category-read.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(CategoryListView, self).get_context_data(**kwargs)
+        context['title'] = 'Админка | Категории'
+        return context
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super(CategoryListView, self).dispatch(request, *args, **kwargs)
+
+
+class CategoryDeleteView(DeleteView):
+    model = ProductCategory
+    template_name = 'adminapp/admin-category-update-delete.html'
+    success_url = reverse_lazy('admins:admin_category')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.product_set.update(is_active=False)
+        self.object.is_active = False
+        self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super(CategoryDeleteView, self).dispatch(request, *args, **kwargs)
+
+
+class CategoryUpdateView(UpdateView):
+    model = ProductCategory
+    template_name = 'adminapp/admin-category-update-delete.html'
+    success_url = reverse_lazy('admins:admin_category')
+    form_class = CategoryUpdateFormAdmin
+
+    def form_valid(self, form):
+        if 'discount' in form.cleaned_data:
+            discount = form.cleaned_data['discount']
+            if discount:
+                print(f'применяется скидка {discount} % к товарам категории {self.object.name}')
+                self.object.product_set.update(price=F('price') * (1 - discount / 100))
+                db_profile_by_type(self.__class__, 'UPDATE', connection.queries)
+        return HttpResponseRedirect(self.get_success_url())
+
+    @method_decorator(user_passes_test(lambda u: u.is_superuser))
+    def dispatch(self, request, *args, **kwargs):
+        return super(CategoryUpdateView, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CategoryUpdateView, self).get_context_data(**kwargs)
+        obj = self.get_object()
+        context['key'] = obj.id
+        context['cat'] = obj.name
+        return context
